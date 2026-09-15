@@ -1,0 +1,7 @@
+# Build artifacts that must never be committed — they belong in Releases.
+dist/
+*.dmg
+*.zip
+*.tar.gz
+*.app/
+checksums.txt
