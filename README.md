@@ -1,13 +1,15 @@
 # SakuraLens Releases
 
-Downloadable builds of [SakuraLens](https://github.com/SakuraCapital/SakuraLens)
+[![Discord](https://img.shields.io/badge/Discord-join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/2DbshCqaD)
+
+Downloadable builds of [SakuraLens](https://github.com/HiganSakura/SakuraLens)
 — a local git diff workspace with a design/verify workflow, an agent API and an
 MCP server.
 
 **This repository contains no source code.** It only hosts the artifacts
 attached to [Releases](../../releases). For the source, build instructions and
 documentation, see the
-[main repository](https://github.com/SakuraCapital/SakuraLens).
+[main repository](https://github.com/HiganSakura/SakuraLens).
 
 ## Download
 
@@ -61,6 +63,11 @@ shasum -a 256 -c checksums.txt
 
 See [RELEASING.md](RELEASING.md) for how the artifacts are produced and
 uploaded by hand.
+
+## Community
+
+Questions, feedback, or release news — join the Discord:
+<https://discord.gg/2DbshCqaD>
 
 ## License
 
