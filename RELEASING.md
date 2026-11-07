@@ -1,70 +1,39 @@
 # Releasing
 
-Artifacts are built locally and uploaded to this repository's GitHub Releases
-by hand. There is no automation here.
+Releases are built from the main repository and published to this repository's
+GitHub Releases by `scripts/release.sh` there. The only thing committed here is
+the "latest release" block of the README, which the script updates.
 
 ## Artifact naming
 
-| Artifact | Producer |
-|----------|----------|
-| `SakuraLens-<version>-macos-<arch>.dmg` | `just release-macos` |
-| `SakuraLens-<version>-macos-<arch>.zip` | `just release-macos` |
-| `skln-<target>.tar.gz` | `.github/workflows/release.yml` in the main repo |
-| `checksums.txt` | `just release-macos` |
+| Artifact | Producer (main repository) |
+|----------|----------------------------|
+| `SakuraLens-<version>-macos-aarch64.dmg` | `just release-macos` |
+| `SakuraLens-<version>-macos-aarch64.zip` | `just release-macos` |
+| `SakuraLens-<version>-linux-x86_64.tar.gz` | `just package-linux` |
+| `SakuraLens-<version>-windows-x86_64.zip` | `just package-windows` |
+| `checksums.txt` | `scripts/release.sh`, from the files above |
 
-`<arch>` is `aarch64` or `x86_64`; `<target>` is a Rust target triple (for
-example `aarch64-apple-darwin`). `<version>` is the workspace version in the
-main repo's `Cargo.toml`.
+`<version>` is `<workspace version>-<channel>.<YYYYMMDD>.<short sha>`, for
+example `0.4.0-beta.20261107.6357b144`; the tag is `v<version>`.
 
-## macOS app
+## Steps
 
-From the main repository:
+From the main repository, with the commit to release pushed to `origin/main`:
 
 ```bash
-just release-macos
+just release-macos      # builds, signs and notarizes on this Mac
+just package-linux      # builds on the Linux host
+just package-windows    # builds on the Windows host
+just release --title "SakuraLens 0.4.0 — <headline>" --notes notes.md
 ```
 
-This builds the UI and the Tauri desktop binary, assembles `SakuraLens.app`,
-ad-hoc signs it, and writes the distributable files (and `checksums.txt`) to
-`dist/`:
+`just release` checks that the version's commit is on `origin/main` and that
+every archive is in `dist/`, writes `checksums.txt`, tags the commit, creates the
+release here with its assets, publishes the launch manifest
+(`versions.json`), and commits the latest-release line to this repository's
+`main`. Add `--dry-run` to see what it would do.
 
-```
-dist/SakuraLens-0.1.0-macos-aarch64.dmg
-dist/SakuraLens-0.1.0-macos-aarch64.zip
-dist/checksums.txt
-```
-
-Build each architecture on that architecture (the bundle is host-native), and
-run the recipe once per arch you intend to publish.
-
-To package only the raw `.app` without the archive step, use
-`just package-macos`.
-
-## Uploading
-
-1. Make sure the tag matches the version you built, e.g. `v0.1.0`
-   (`git -C <main-repo> tag v0.1.0 && git -C <main-repo> push origin v0.1.0`).
-2. Create the release here:
-   ```bash
-   gh release create v0.1.0 \
-       --repo HiganSakura/SakuraLens-release \
-       --title "SakuraLens v0.1.0" \
-       --notes-file <notes>
-   ```
-3. Upload the artifacts from `dist/`, plus any `skln-<target>.tar.gz` built by
-   the main repo's release workflow:
-   ```bash
-   gh release upload v0.1.0 \
-       --repo HiganSakura/SakuraLens-release \
-       dist/SakuraLens-0.1.0-macos-aarch64.dmg \
-       dist/SakuraLens-0.1.0-macos-aarch64.zip \
-       dist/checksums.txt
-   ```
-4. Sanity-check the rendered release page and the `checksums.txt` download.
-
-## Notes
-
-- The app is ad-hoc signed, not notarized. If notarization is added later, the
-  `.dmg` should be stapled (`xcrun stapler staple`) before upload.
-- Keep `checksums.txt` in sync with the uploaded files; replace it rather than
-  appending if a release is re-uploaded.
+The macOS build is notarized and stapled; check it with
+`spctl -a -vv /Applications/SakuraLens.app` (`accepted`, `source=Notarized
+Developer ID`).

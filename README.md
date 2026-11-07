@@ -11,45 +11,35 @@ attached to [Releases](../../releases). For the source, build instructions and
 documentation, see the
 [main repository](https://github.com/HiganSakura/SakuraLens).
 
+<!-- latest:start -->
+**Latest release: [see the releases page](../../releases/latest)**
+<!-- latest:end -->
+
 ## Download
 
-Open the [latest release](../../releases/latest) and pick the artifact for your
+Open the [latest release](../../releases/latest) and pick the file for your
 platform.
 
-### macOS app
+| Platform | File | Notes |
+|----------|------|-------|
+| macOS (Apple silicon) | `SakuraLens-<version>-macos-aarch64.dmg` | Drag-to-**Applications** installer |
+| macOS (Apple silicon) | `SakuraLens-<version>-macos-aarch64.zip` | Zipped `.app` bundle; what the in-app updater downloads |
+| Linux (x86_64) | `SakuraLens-<version>-linux-x86_64.tar.gz` | The `skln` binary |
+| Windows (x86_64) | `SakuraLens-<version>-windows-x86_64.zip` | `skln.exe` |
 
-| File | Notes |
-|------|-------|
-| `SakuraLens-<version>-macos-<arch>.dmg` | Drag-to-**Applications** installer |
-| `SakuraLens-<version>-macos-<arch>.zip` | Zipped `.app` bundle |
+### macOS
 
-`<arch>` is `aarch64` (Apple silicon) or `x86_64` (Intel).
+The app is signed with a Developer ID and notarized, so it opens like any
+other app: drag it to **Applications** and launch it.
 
-The app is **ad-hoc signed, not notarized**, so Gatekeeper blocks the first
-launch. Either right-click the app and choose **Open**, or clear the quarantine
-flag once:
+### Linux and Windows
 
-```bash
-xattr -dr com.apple.quarantine /Applications/SakuraLens.app
-```
-
-### Command-line binaries
-
-| File | Notes |
-|------|-------|
-| `skln-<target>.tar.gz` | Static `skln` binary for the given Rust target |
-
-Unpack and put `skln` on your `PATH`:
+Unpack the archive and run `skln` (`skln.exe` on Windows) on a repository:
 
 ```bash
-tar -xzf skln-<target>.tar.gz
-install -m 0755 skln /usr/local/bin/skln
-skln --repo /path/to/repo
+tar -xzf SakuraLens-<version>-linux-x86_64.tar.gz
+./skln /path/to/repo
 ```
-
-Targets follow Rust's triple naming, for example
-`aarch64-apple-darwin`, `x86_64-apple-darwin`,
-`x86_64-unknown-linux-gnu` and `x86_64-pc-windows-msvc`.
 
 ## Verify downloads
 
@@ -59,16 +49,24 @@ Every release ships a `checksums.txt` with SHA-256 sums:
 shasum -a 256 -c checksums.txt
 ```
 
+## Updates
+
+The macOS app looks for a newer release when it opens, at most once a day. It asks
+this repository's releases and the product page's manifest, and uses whichever has the
+newer version. When there is one, an **Update** chip appears in the header: it shows
+what changed in that release and lets you install it and restart, or open its release
+page here. Versions follow [semantic versioning](https://semver.org); a beta is older than
+the release it leads to.
+
+The Linux and Windows builds do not replace themselves: download the new archive from
+the release page.
+
 ## Releasing
 
 See [RELEASING.md](RELEASING.md) for how the artifacts are produced and
-uploaded by hand.
+published.
 
 ## Community
 
 Questions, feedback, or release news — join the Discord:
 <https://discord.gg/2DbshCqaD>
-
-## License
-
-[MIT](LICENSE) © Jakku Sakura
