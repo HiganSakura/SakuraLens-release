@@ -12,7 +12,7 @@ documentation, see the
 [main repository](https://github.com/HiganSakura/SakuraLens).
 
 <!-- latest:start -->
-**Latest release: [see the releases page](../../releases/latest)**
+**Latest release: [0.4.0](../../releases/tag/v0.4.0-beta.20261107.g8b712bd8)** (`v0.4.0-beta.20261107.g8b712bd8`)
 <!-- latest:end -->
 
 ## Download
